@@ -125,7 +125,7 @@ def generate_pdf(inputs, probability, credit_score, rating, shap_values):
     pdf.set_xy(10, y_div + 4)
     pdf.set_font('Helvetica', 'B', 11)
     pdf.set_text_color(50, 50, 50)
-    pdf.cell(0, 8, 'TOP RISK FACTORS  (SHAP)')
+    pdf.cell(0, 8, 'TOP RISK FACTORS  (SHAP - SHapley Additive exPlanations)')
 
     top_factors = shap_values.abs().nlargest(5)
     for i, feat in enumerate(top_factors.index):
@@ -196,8 +196,11 @@ def render_results(probability, credit_score, rating, shap_values):
 </div>""", unsafe_allow_html=True)
 
     with res_col3:
-        st.markdown('**Top Risk Factors (SHAP)**')
-        st.caption('🔴 Increases default risk  ·  🟢 Reduces default risk')
+        st.markdown('**Top Risk Factors — SHAP Analysis**',
+                    help='SHAP (SHapley Additive exPlanations): shows how much each input pushed '
+                         'this applicant\'s score up or down from the baseline. '
+                         'Red = increased default risk, Green = reduced default risk.')
+        st.caption('🔴 Increases default risk  ·  🟢 Reduces default risk  ·  Bar length = strength of influence')
         top_idx = shap_values.abs().nlargest(7).index
         contrib_top = shap_values[top_idx].sort_values()
         labels = [FEATURE_LABELS.get(f, f) for f in contrib_top.index]
@@ -274,6 +277,28 @@ with st.sidebar:
 | 300 – 499 | 🔴 Poor | High |
 
 **Default Probability** is the model's estimated chance the applicant will fail to repay.
+""")
+
+    with st.expander('🔍 What is SHAP? (Risk Factor Explanation)'):
+        st.markdown("""
+**SHAP** stands for **SH**apley **A**dditive ex**P**lanations.
+
+It is a mathematical technique borrowed from game theory that answers one question every banking officer needs to ask:
+
+> *"Why did this applicant receive this specific credit score?"*
+
+**How it works — in plain terms:**
+
+Every applicant starts from a baseline score (the average across all applicants). SHAP then calculates how much each individual input — age, delinquency history, credit utilization, etc. — **pushed the score up or down** from that baseline for *this specific person*.
+
+The result is a line-item receipt:
+- 🔴 **Red bars** = factors that *increased* default risk (lowered the score)
+- 🟢 **Green bars** = factors that *reduced* default risk (raised the score)
+- **Bar length** = how strongly that factor influenced the outcome
+
+**Why it matters in banking:**
+
+Under regulations such as the **Equal Credit Opportunity Act (ECOA)** and **GDPR Article 22**, lenders may be legally required to provide applicants with a specific reason for an adverse credit decision. SHAP makes this possible automatically — it produces auditable, per-decision explanations rather than vague model-level statistics.
 """)
 
     st.divider()
