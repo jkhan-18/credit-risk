@@ -69,7 +69,13 @@ def predict(age, income, loan_amount, loan_tenure_months, avg_dpd_per_delinquenc
 
     probability, credit_score, rating = calculate_credit_score(input_df)
 
-    return probability, credit_score, rating
+    # Logit contribution of each feature = coefficient × scaled value
+    contributions = pd.Series(
+        input_df.values[0] * model.coef_[0],
+        index=features
+    )
+
+    return probability, credit_score, rating, contributions
 
 
 def calculate_credit_score(input_df, base_score=300, scale_length=600):
