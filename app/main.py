@@ -368,18 +368,19 @@ with tab1:
         probability, credit_score, rating, shap_values = st.session_state.prediction_result
         inputs = st.session_state.prediction_inputs
 
-        st.subheader('Assessment Results')
+        res_hdr, pdf_hdr = st.columns([3, 1])
+        with res_hdr:
+            st.subheader('Assessment Results')
+        with pdf_hdr:
+            pdf_bytes = generate_pdf(inputs, probability, credit_score, rating, shap_values)
+            st.download_button(
+                label='📄 Download PDF Report',
+                data=pdf_bytes,
+                file_name=f'credit_report_{date.today()}.pdf',
+                mime='application/pdf',
+                use_container_width=True,
+            )
         render_results(probability, credit_score, rating, shap_values)
-
-        # PDF download
-        pdf_bytes = generate_pdf(inputs, probability, credit_score, rating, shap_values)
-        st.download_button(
-            label='📄 Download PDF Report',
-            data=pdf_bytes,
-            file_name=f'credit_report_{date.today()}.pdf',
-            mime='application/pdf',
-            use_container_width=True,
-        )
 
         st.divider()
 
@@ -464,9 +465,13 @@ with tab2:
                 output_df = pd.concat([input_df.reset_index(drop=True), results_df], axis=1)
 
                 def highlight_rating(val):
-                    palette = {'Poor': '#ffebee', 'Average': '#fff3e0',
-                               'Good': '#f1f8e9', 'Excellent': '#e3f2fd'}
-                    return f'background-color: {palette.get(val, "")}'
+                    palette = {
+                        'Poor':      'background-color: #c62828; color: #ffffff; font-weight: bold',
+                        'Average':   'background-color: #e65100; color: #ffffff; font-weight: bold',
+                        'Good':      'background-color: #558b2f; color: #ffffff; font-weight: bold',
+                        'Excellent': 'background-color: #1565c0; color: #ffffff; font-weight: bold',
+                    }
+                    return palette.get(val, '')
 
                 st.dataframe(
                     output_df.style.map(highlight_rating, subset=['rating']),
