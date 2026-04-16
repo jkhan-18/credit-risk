@@ -131,7 +131,7 @@ def generate_pdf(inputs, probability, credit_score, rating, shap_values):
         val = shap_values[feat]
         label = FEATURE_LABELS.get(feat, feat)
         direction = 'Increases default risk' if val > 0 else 'Reduces default risk'
-        indicator = chr(8593) if val > 0 else chr(8595)
+        indicator = '[+]' if val > 0 else '[-]'
         color = (198, 40, 40) if val > 0 else (46, 125, 50)
         pdf.set_xy(10, y_div + 14 + i * 8)
         pdf.set_font('Helvetica', '', 10)
