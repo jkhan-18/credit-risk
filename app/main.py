@@ -8,7 +8,7 @@ from fpdf import FPDF
 from prediction_helper import predict, predict_batch, _BATCH_COLUMNS
 
 st.set_page_config(
-    page_title='Lauki Finance: Credit Risk Modelling',
+    page_title='Quantum Finance: Credit Risk Modelling',
     page_icon='📊',
     layout='wide'
 )
@@ -49,6 +49,7 @@ def generate_pdf(inputs, probability, credit_score, rating, shap_values):
     rc = RATING_COLORS_RGB.get(rating, (51, 51, 51))
 
     pdf = FPDF()
+    pdf.set_auto_page_break(auto=False)
     pdf.add_page()
 
     pdf.set_fill_color(21, 101, 192)
@@ -56,7 +57,7 @@ def generate_pdf(inputs, probability, credit_score, rating, shap_values):
     pdf.set_xy(10, 7)
     pdf.set_font('Helvetica', 'B', 14)
     pdf.set_text_color(255, 255, 255)
-    pdf.cell(0, 10, 'LAUKI FINANCE  -  CREDIT RISK ASSESSMENT REPORT')
+    pdf.cell(0, 10, 'QUANTUM FINANCE  -  CREDIT RISK ASSESSMENT REPORT')
 
     pdf.set_xy(10, 28)
     pdf.set_font('Helvetica', '', 9)
@@ -138,10 +139,13 @@ def generate_pdf(inputs, probability, credit_score, rating, shap_values):
         pdf.set_text_color(*color)
         pdf.cell(0, 6, f'  {i + 1}. {label}  {indicator}  {direction}')
 
-    pdf.set_xy(10, 282)
+    # Footer — anchored to bottom of page, never overflows
+    pdf.set_xy(10, 287)
+    pdf.set_draw_color(200, 200, 200)
+    pdf.line(10, 286, 200, 286)
     pdf.set_font('Helvetica', 'I', 8)
     pdf.set_text_color(160, 160, 160)
-    pdf.cell(0, 6, 'Lauki Finance Credit Risk Model  |  AUC: 0.98  |  Gini: 0.96  |  For internal use only')
+    pdf.cell(0, 6, 'Quantum Finance Credit Risk Model  |  AUC: 0.98  |  Gini: 0.96  |  For internal use only')
 
     return bytes(pdf.output())
 
@@ -213,7 +217,7 @@ def render_results(probability, credit_score, rating, shap_values):
 
 # ── Sidebar ───────────────────────────────────────────────────────────────────
 with st.sidebar:
-    st.title('📊 Lauki Finance')
+    st.title('📊 Quantum Finance')
     st.caption('Credit Risk Assessment Tool')
     st.divider()
 
@@ -279,7 +283,7 @@ with st.sidebar:
 
 
 # ── Title ─────────────────────────────────────────────────────────────────────
-st.title('Lauki Finance: Credit Risk Modelling')
+st.title('Quantum Finance: Credit Risk Modelling')
 st.markdown("Enter the applicant's details below to generate a credit risk assessment and score.")
 st.divider()
 
