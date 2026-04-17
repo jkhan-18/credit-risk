@@ -189,7 +189,4 @@ This app is deployed on **Streamlit Community Cloud**:
 1. GitHub repo is connected at [share.streamlit.io](https://share.streamlit.io)
 2. Entry point: `app/main.py`
 3. Python version pinned to 3.11 via `runtime.txt` (required for `scikit-learn==1.3.0` wheel compatibility)
-
----
-
-*Built as part of the Codebasics ML Course — extended with production-grade features.*
+4. All dependencies listed in `requirements.txt` with exact versions
