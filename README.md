@@ -24,19 +24,47 @@
 ```
 Credit_Card_Risk/
 ├── app/
-│   ├── main.py                  # Streamlit UI: tabs, sidebar, forms, visualisations
-│   ├── prediction_helper.py     # Inference pipeline: preprocessing, SHAP, batch scoring
+│   ├── main.py                        # Entry point — page config, sidebar, tabs (thin orchestrator)
+│   ├── config.py                      # All constants: colours, labels, paths, score thresholds
+│   ├── model/
+│   │   ├── loader.py                  # Loads model bundle from disk once; initialises SHAP explainer
+│   │   ├── preprocessor.py            # prepare_input(): feature engineering, encoding, scaling
+│   │   └── predictor.py               # predict(), predict_batch(), calculate_credit_score()
+│   ├── ui/
+│   │   ├── components.py              # Shared widgets: gauge chart, rating badge, SHAP bar chart
+│   │   ├── sidebar.py                 # Sidebar: usage guide, field reference, model metadata
+│   │   ├── single_applicant.py        # Tab 1: input form, results, What-If simulator, PDF download
+│   │   └── batch_scoring.py           # Tab 2: CSV upload, scoring, results table, summary dashboard
+│   ├── reports/
+│   │   └── pdf_generator.py           # generate_pdf(): one-page PDF credit assessment report
 │   └── artifacts/
-│       └── model_data.joblib    # Serialised model bundle (model + scaler + features)
-├── dataset/                     # Raw training data (excluded from repo via .gitignore)
+│       └── model_data.joblib          # Serialised model bundle (model + scaler + features)
+├── artifacts/                         # Root copy of model bundle (for notebook compatibility)
+│   └── model_data.joblib
+├── dataset/                           # Raw training data (excluded from repo via .gitignore)
 │   ├── customers.csv
 │   ├── loans.csv
 │   └── bureau_data.csv
-├── credit_risk_model_codebasics.ipynb  # Full training & experimentation notebook
-├── requirements.txt             # Pinned Python dependencies
-├── runtime.txt                  # Python 3.11 pin for Streamlit Community Cloud
+├── credit_risk_model_codebasics.ipynb # Full training & experimentation notebook
+├── requirements.txt                   # Pinned Python dependencies
+├── runtime.txt                        # Python 3.11 pin for Streamlit Community Cloud
 └── .gitignore
 ```
+
+### Module Responsibilities
+
+| Module | Responsibility |
+|---|---|
+| `main.py` | Thin Streamlit entry point — wires page config, sidebar, and tabs together |
+| `config.py` | Single source of truth for all constants (colours, labels, thresholds, paths) |
+| `model/loader.py` | Loads the joblib bundle once at import time; exposes model, scaler, SHAP explainer |
+| `model/preprocessor.py` | Replicates the training pipeline: feature engineering → encoding → scaling → selection |
+| `model/predictor.py` | Single-applicant prediction, batch scoring, credit score / rating computation |
+| `ui/components.py` | Reusable Plotly gauge and SHAP bar chart rendered by any tab |
+| `ui/sidebar.py` | User guide, field reference, result interpretation, SHAP explainer, model stats |
+| `ui/single_applicant.py` | Tab 1 form, session-state result persistence, What-If simulator |
+| `ui/batch_scoring.py` | Tab 2 CSV workflow: upload → validate → score → export → summary chart |
+| `reports/pdf_generator.py` | One-page PDF report with score, rating, applicant details, and SHAP factors |
 
 ---
 
