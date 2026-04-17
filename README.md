@@ -1,25 +1,79 @@
-# Quantum Finance: Credit Risk Modelling
+<div align="center">
 
-> An end-to-end ML-powered credit risk assessment platform built with Streamlit. Predicts the probability of loan default, generates a credit score (300–900), and provides SHAP-based explanations — all served through an interactive web interface.
+# 📊 Quantum Finance: Credit Risk Modelling
+
+**An end-to-end ML-powered credit risk assessment platform**
+
+Predicts the probability of loan default · Generates a credit score (300–900) · Provides SHAP-based explanations
 
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://credit-risk-deihgke4ejwjb9mlsa34p6.streamlit.app/)
+&nbsp;&nbsp;
+[![Python 3.11](https://img.shields.io/badge/Python-3.11-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+&nbsp;&nbsp;
+[![scikit-learn](https://img.shields.io/badge/scikit--learn-1.3-F7931E?logo=scikit-learn&logoColor=white)](https://scikit-learn.org/)
+&nbsp;&nbsp;
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
+</div>
 
 ---
 
-## Features
+## ✨ Features
 
-| Feature | Description |
-|---|---|
-| **Single Applicant Scoring** | Fill in 11 inputs and get an instant credit score, default probability, and rating |
-| **SHAP Explainability** | Top risk factors shown as a SHAP waterfall bar chart — red = increases risk, green = reduces risk |
-| **What-If Simulator** | Adjust key inputs via sliders and compare the original vs. simulated score side-by-side |
-| **Batch Scoring** | Upload a CSV of applicants, score all at once, download colour-coded results with a summary dashboard |
-| **PDF Report Export** | One-click download of a formatted credit assessment report including score, rating, applicant details, and top risk factors |
-| **Sidebar Guide** | Inline documentation explaining every input field and how to interpret results |
+<table>
+<tr>
+<td width="50%">
+
+### 📋 Single Applicant Scoring
+Fill in 11 inputs and get an **instant credit score**, default probability, and risk rating
+
+### 🔍 SHAP Explainability
+Per-applicant risk factors shown as a horizontal bar chart — **red = risk ↑**, **green = risk ↓**
+
+### 🔧 What-If Simulator
+Adjust key inputs via sliders and compare original vs. simulated score **side-by-side**
+
+</td>
+<td width="50%">
+
+### 📤 Batch Scoring
+Upload a CSV, score all applicants at once, download **colour-coded results** with a summary dashboard
+
+### 📄 PDF Report Export
+One-click download of a formatted assessment report with score, rating, details, and top risk factors
+
+### 📖 Sidebar Guide
+Inline documentation explaining every input field and how to interpret results
+
+</td>
+</tr>
+</table>
 
 ---
 
-## Application Architecture
+## 🚀 Quick Start
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/jkhan-18/credit-risk.git
+cd credit-risk
+
+# 2. Create a virtual environment (recommended)
+python -m venv .venv
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
+
+# 3. Install dependencies
+pip install -r requirements.txt
+
+# 4. Run the app
+streamlit run app/main.py
+```
+
+> App opens at **http://localhost:8501**
+
+---
+
+## 🏗️ Application Architecture
 
 ```
 Credit_Card_Risk/
@@ -51,7 +105,10 @@ Credit_Card_Risk/
 └── .gitignore
 ```
 
-### Module Responsibilities
+<details>
+<summary>📦 <strong>Module Responsibilities</strong> (click to expand)</summary>
+
+<br>
 
 | Module | Responsibility |
 |---|---|
@@ -66,11 +123,29 @@ Credit_Card_Risk/
 | `ui/batch_scoring.py` | Tab 2 CSV workflow: upload → validate → score → export → summary chart |
 | `reports/pdf_generator.py` | One-page PDF report with score, rating, applicant details, and SHAP factors |
 
+</details>
+
 ---
 
-## Model Details
+## 🧠 Model Details
 
 ### Training Pipeline
+
+```mermaid
+graph LR
+    A[📂 Raw Data<br>3 CSVs] --> B[🔀 Merge & Clean]
+    B --> C[📊 EDA<br>KDE · Boxplots]
+    C --> D[⚙️ Feature Engineering<br>LTI · Delinquency · DPD]
+    D --> E[🎯 Feature Selection<br>VIF · IV]
+    E --> F[⚖️ SMOTETomek<br>Class Balance]
+    F --> G[🔧 Optuna Tuning<br>50 trials · 3-fold CV]
+    G --> H[✅ Logistic Regression]
+```
+
+<details>
+<summary>📋 <strong>Full Training Steps</strong> (click to expand)</summary>
+
+<br>
 
 | Step | Detail |
 |---|---|
@@ -85,108 +160,117 @@ Credit_Card_Risk/
 | **Hyperparameter Tuning** | Optuna with 50 trials, 3-fold CV, macro F1 objective |
 | **Algorithm** | Logistic Regression (best interpretability/performance tradeoff vs. XGBoost) |
 
-### Model Performance
+</details>
 
-| Metric | Value |
-|---|---|
-| AUC (ROC) | **0.98** |
-| Gini Coefficient | **0.96** |
-| KS Statistic | **85.98%** (at decile 8) |
-| Rank Ordering | ✅ Confirmed (top 2 deciles capture ~98.6% of default events) |
+### 📈 Model Performance
 
-### Credit Score Mapping
+<div align="center">
+
+| Metric | Value | |
+|---|---|---|
+| **AUC (ROC)** | 0.98 | 🟢 Excellent |
+| **Gini Coefficient** | 0.96 | 🟢 Excellent |
+| **KS Statistic** | 85.98% | 🟢 Top 2nd decile |
+| **Rank Ordering** | Confirmed | ✅ Top 2 deciles → 98.6% defaults |
+
+</div>
+
+### 🎯 Credit Score Mapping
 
 $$\text{Credit Score} = 300 + (1 - P_{\text{default}}) \times 600$$
 
+<div align="center">
+
 | Score Range | Rating | Risk Level |
-|---|---|---|
-| 750 – 900 | 🌟 Excellent | Very Low |
-| 650 – 749 | 🟢 Good | Low |
-| 500 – 649 | 🟠 Average | Medium |
-| 300 – 499 | 🔴 Poor | High |
+|:---:|:---:|:---:|
+| 750 – 900 | 🌟 **Excellent** | Very Low |
+| 650 – 749 | 🟢 **Good** | Low |
+| 500 – 649 | 🟠 **Average** | Medium |
+| 300 – 499 | 🔴 **Poor** | High |
+
+</div>
 
 ---
 
-## Input Features
+## 📥 Input Features
 
 | Input | Type | Description |
 |---|---|---|
-| Age | Numeric | Applicant's age (18–100) |
-| Income | Numeric | Annual gross income (₹) |
-| Loan Amount | Numeric | Requested loan amount (₹) |
-| Loan Tenure | Numeric | Repayment period in months |
-| Avg DPD | Numeric | Average days past due per delinquent month |
-| Delinquency Ratio | Numeric (%) | % of loan months with a late payment |
-| Credit Utilization | Numeric (%) | % of available credit currently in use |
-| Open Loan Accounts | Integer (1–4) | Number of active loan accounts |
-| Residence Type | Categorical | Owned / Rented / Mortgage |
-| Loan Purpose | Categorical | Education / Home / Auto / Personal |
-| Loan Type | Categorical | Secured / Unsecured |
+| **Age** | Numeric | Applicant's age (18–100) |
+| **Income** | Numeric | Annual gross income (₹) |
+| **Loan Amount** | Numeric | Requested loan amount (₹) |
+| **Loan Tenure** | Numeric | Repayment period in months |
+| **Avg DPD** | Numeric | Average days past due per delinquent month |
+| **Delinquency Ratio** | Numeric (%) | % of loan months with a late payment |
+| **Credit Utilization** | Numeric (%) | % of available credit currently in use |
+| **Open Loan Accounts** | Integer (1–4) | Number of active loan accounts |
+| **Residence Type** | Categorical | Owned / Rented / Mortgage |
+| **Loan Purpose** | Categorical | Education / Home / Auto / Personal |
+| **Loan Type** | Categorical | Secured / Unsecured |
 
 ---
 
-## Run Locally
-
-```bash
-# 1. Clone the repository
-git clone https://github.com/jkhan-18/credit-risk.git
-cd credit-risk
-
-# 2. Create a virtual environment (recommended)
-python -m venv .venv
-source .venv/bin/activate   # Windows: .venv\Scripts\activate
-
-# 3. Install dependencies
-pip install -r requirements.txt
-
-# 4. Run the app
-streamlit run app/main.py
-```
-
-App opens at `http://localhost:8501`
-
----
-
-## Batch Scoring CSV Format
+## 📤 Batch Scoring CSV Format
 
 Download the template from the app's **Batch Scoring** tab, or use this column structure:
 
+<details>
+<summary>📋 <strong>CSV column reference</strong> (click to expand)</summary>
+
+<br>
+
 | Column | Example |
 |---|---|
-| age | 28 |
-| income | 1200000 |
-| loan_amount | 2560000 |
-| loan_tenure_months | 36 |
-| avg_dpd_per_delinquency | 20 |
-| delinquency_ratio | 30 |
-| credit_utilization_ratio | 30 |
-| num_open_accounts | 2 |
-| residence_type | Owned |
-| loan_purpose | Personal |
-| loan_type | Unsecured |
+| `age` | 28 |
+| `income` | 1200000 |
+| `loan_amount` | 2560000 |
+| `loan_tenure_months` | 36 |
+| `avg_dpd_per_delinquency` | 20 |
+| `delinquency_ratio` | 30 |
+| `credit_utilization_ratio` | 30 |
+| `num_open_accounts` | 2 |
+| `residence_type` | Owned |
+| `loan_purpose` | Personal |
+| `loan_type` | Unsecured |
+
+</details>
 
 ---
 
-## Tech Stack
+## 🛠️ Tech Stack
+
+<div align="center">
 
 | Layer | Technology |
 |---|---|
-| Frontend | Streamlit 1.47 |
-| Visualisation | Plotly |
-| ML Model | scikit-learn 1.3 (LogisticRegression) |
-| Explainability | SHAP (LinearExplainer) |
-| PDF Generation | fpdf2 |
-| Data Processing | pandas, numpy |
-| Model Serialisation | joblib |
-| Deployment | Streamlit Community Cloud |
+| **Frontend** | ![Streamlit](https://img.shields.io/badge/Streamlit-1.47-FF4B4B?logo=streamlit&logoColor=white) |
+| **Visualisation** | ![Plotly](https://img.shields.io/badge/Plotly-3F4F75?logo=plotly&logoColor=white) |
+| **ML Model** | ![scikit-learn](https://img.shields.io/badge/scikit--learn-1.3-F7931E?logo=scikit-learn&logoColor=white) |
+| **Explainability** | ![SHAP](https://img.shields.io/badge/SHAP-LinearExplainer-purple) |
+| **PDF Generation** | ![fpdf2](https://img.shields.io/badge/fpdf2-2.7-blue) |
+| **Data Processing** | ![pandas](https://img.shields.io/badge/pandas-150458?logo=pandas&logoColor=white) ![NumPy](https://img.shields.io/badge/NumPy-013243?logo=numpy&logoColor=white) |
+| **Serialisation** | ![joblib](https://img.shields.io/badge/joblib-1.4-lightgrey) |
+| **Deployment** | ![Streamlit Cloud](https://img.shields.io/badge/Streamlit_Cloud-FF4B4B?logo=streamlit&logoColor=white) |
+
+</div>
 
 ---
 
-## Deployment
+## ☁️ Deployment
 
 This app is deployed on **Streamlit Community Cloud**:
 
 1. GitHub repo is connected at [share.streamlit.io](https://share.streamlit.io)
 2. Entry point: `app/main.py`
-3. Python version pinned to 3.11 via `runtime.txt` (required for `scikit-learn==1.3.0` wheel compatibility)
+3. Python version pinned to **3.11** via `runtime.txt` (required for `scikit-learn==1.3.0` wheel compatibility)
 4. All dependencies listed in `requirements.txt` with exact versions
+
+---
+
+<div align="center">
+
+*Built as part of the Codebasics ML Course — extended with production-grade features.*
+
+**⭐ Star this repo if you found it useful!**
+
+</div>
