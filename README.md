@@ -269,8 +269,6 @@ This app is deployed on **Streamlit Community Cloud**:
 
 <div align="center">
 
-*Built as part of the Codebasics ML Course — extended with production-grade features.*
-
 **⭐ Star this repo if you found it useful!**
 
 </div>
